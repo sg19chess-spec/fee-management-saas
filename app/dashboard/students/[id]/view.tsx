@@ -165,14 +165,14 @@ export default function StudentViewPage({ params }: { params: { id: string } }) 
 
       setPayments(paymentsData?.map(p => ({
         ...p,
-        student_name: `${(p.students as any).first_name} ${(p.students as any).last_name}`
+        student_name: `${(p.students as any)[0]?.first_name || ''} ${(p.students as any)[0]?.last_name || ''}`
       })) || []);
 
       setFeePlans(feePlansData?.map(fp => ({
-        id: fp.fee_plans.id,
-                  name: (fp.fee_plans as any).name,
-        academic_year: fp.fee_plans.academic_year,
-        total_amount: fp.fee_plans.total_amount,
+        id: (fp.fee_plans as any)[0]?.id || '',
+        name: (fp.fee_plans as any)[0]?.name || '',
+        academic_year: (fp.fee_plans as any)[0]?.academic_year || '',
+        total_amount: (fp.fee_plans as any)[0]?.total_amount || 0,
         assigned_date: fp.assigned_date,
         status: fp.status
       })) || []);

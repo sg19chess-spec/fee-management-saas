@@ -353,18 +353,18 @@ export default function ReminderManager() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
                           <div className="text-sm font-medium text-gray-900">
-                            {item.student_fees.students.users.first_name} {item.student_fees.students.users.last_name}
+                            {(item.student_fees as any)[0]?.students?.[0]?.users?.[0]?.first_name || ''} {(item.student_fees as any)[0]?.students?.[0]?.users?.[0]?.last_name || ''}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {item.student_fees.students.admission_number}
+                            {(item.student_fees as any)[0]?.students?.[0]?.admission_number || ''}
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.student_fees.students.classes.name} {item.student_fees.students.classes.section}
+                        {(item.student_fees as any)[0]?.students?.[0]?.classes?.[0]?.name || ''} {(item.student_fees as any)[0]?.students?.[0]?.classes?.[0]?.section || ''}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {item.fee_items.name}
+                        {(item.fee_items as any)[0]?.name || ''}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         {formatDate(item.due_date)}

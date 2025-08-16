@@ -252,25 +252,25 @@ export function PendingDues() {
                         <div className="flex-shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-red-100 flex items-center justify-center">
                             <span className="text-sm font-medium text-red-600">
-                              {due.students.first_name[0]}{due.students.last_name[0]}
+                              {(due.students as any)[0]?.first_name?.[0] || ''}{(due.students as any)[0]?.last_name?.[0] || ''}
                             </span>
                           </div>
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {due.students.first_name} {due.students.last_name}
+                            {(due.students as any)[0]?.first_name || ''} {(due.students as any)[0]?.last_name || ''}
                           </div>
                           <div className="text-sm text-gray-500">
-                            {due.students.admission_number}
+                            {(due.students as any)[0]?.admission_number || ''}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {due.classes.name} {due.classes.section}
+                      {(due.classes as any)[0]?.name || ''} {(due.classes as any)[0]?.section || ''}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {due.fee_items?.name || 'N/A'}
+                      {(due.fee_items as any)[0]?.name || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {formatCurrency(due.outstanding_amount)}
@@ -291,7 +291,7 @@ export function PendingDues() {
                       </Badge>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {due.students.guardian_phone || 'N/A'}
+                      {(due.students as any)[0]?.guardian_phone || 'N/A'}
                     </td>
                   </tr>
                 );
