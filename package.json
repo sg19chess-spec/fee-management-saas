@@ -10,7 +10,12 @@
     "type-check": "tsc --noEmit",
     "db:generate": "supabase gen types typescript --project-id YOUR_PROJECT_ID > types/supabase.ts",
     "db:push": "supabase db push",
-    "db:reset": "supabase db reset"
+    "db:reset": "supabase db reset",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
@@ -61,6 +66,14 @@
     "@types/papaparse": "^5.3.14",
     "@types/qrcode": "^1.5.5",
     "@types/cron": "^2.4.0",
+    "@types/html2canvas": "^1.0.0",
+    "@types/jest": "^29.5.8",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/user-event": "^14.5.1",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "@playwright/test": "^1.39.0",
     "typescript": "^5.3.3",
     "eslint": "^8.55.0",
     "eslint-config-next": "14.0.4",
