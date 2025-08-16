@@ -90,9 +90,9 @@ export async function GET(
       student_class: `${payment.students.classes.name} ${payment.students.classes.section}`,
       fee_items: feeItems?.map(item => ({
         id: item.id,
-        fee_item_name: item.fee_items.name,
+        fee_item_name: (item.fee_items as any).name,
         paid_amount: item.paid_amount,
-        fee_plan_name: item.fee_plans.name
+        fee_plan_name: (item.fee_plans as any).name
       })) || []
     };
 
