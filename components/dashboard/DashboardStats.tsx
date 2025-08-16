@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import { useAuth } from '@/components/providers/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import {
   CurrencyDollarIcon,
@@ -34,7 +34,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-export function DashboardStats({ stats }: DashboardStatsProps) {
+export function DashboardStats({ stats: initialStats }: DashboardStatsProps) {
   const { profile } = useAuth();
   const [data, setData] = useState<StatsData>({
     totalStudents: 0,
@@ -48,22 +48,22 @@ export function DashboardStats({ stats }: DashboardStatsProps) {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (stats) {
+    if (initialStats) {
       // Use provided stats (for mock data)
-      const collectionRate = stats.totalCollection > 0 
-        ? ((stats.totalCollection - stats.pendingDues) / stats.totalCollection) * 100 
+      const collectionRate = initialStats.totalCollection > 0 
+        ? ((initialStats.totalCollection - initialStats.pendingDues) / initialStats.totalCollection) * 100 
         : 0;
       
       setData({
-        ...stats,
+        ...initialStats,
         collectionRate: Math.round(collectionRate),
-        ytdRevenue: stats.totalCollection,
+        ytdRevenue: initialStats.totalCollection,
       });
       setLoading(false);
     } else {
       fetchDashboardStats();
     }
-  }, [stats, profile?.institution_id]);
+  }, [initialStats, profile?.institution_id]);
 
   const fetchDashboardStats = async () => {
     if (!profile?.institution_id) return;
