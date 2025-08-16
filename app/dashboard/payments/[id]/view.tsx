@@ -12,7 +12,7 @@ import { Receipt } from '@/components/payments/Receipt';
 import { 
   ArrowLeftIcon, 
   DocumentTextIcon,
-  DownloadIcon,
+  ArrowDownTrayIcon,
   PrinterIcon,
   UserIcon,
   CreditCardIcon,
@@ -232,7 +232,7 @@ export default function PaymentViewPage({ params }: { params: { id: string } }) 
           </div>
           <div className="flex space-x-3">
             <Button onClick={handleDownloadReceipt}>
-              <DownloadIcon className="h-4 w-4 mr-2" />
+              <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
               Download Receipt
             </Button>
             <Button variant="outline" onClick={handlePrintReceipt}>
