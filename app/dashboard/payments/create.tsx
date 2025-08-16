@@ -213,11 +213,23 @@ export default function CreatePaymentPage() {
     if (checked) {
       const updatedItems = [...selectedFeeItems, { ...feeItem, paid_amount: feeItem.outstanding_amount }];
       setSelectedFeeItems(updatedItems);
-      setValue('fee_items', updatedItems);
+      setValue('fee_items', updatedItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        amount: item.amount,
+        outstanding_amount: item.outstanding_amount,
+        paid_amount: item.paid_amount || 0
+      })));
     } else {
       const updatedItems = selectedFeeItems.filter(item => item.id !== feeItem.id);
       setSelectedFeeItems(updatedItems);
-      setValue('fee_items', updatedItems);
+      setValue('fee_items', updatedItems.map(item => ({
+        id: item.id,
+        name: item.name,
+        amount: item.amount,
+        outstanding_amount: item.outstanding_amount,
+        paid_amount: item.paid_amount || 0
+      })));
     }
   };
 
@@ -226,7 +238,13 @@ export default function CreatePaymentPage() {
       item.id === feeItemId ? { ...item, paid_amount: amount } : item
     );
     setSelectedFeeItems(updatedItems);
-    setValue('fee_items', updatedItems);
+    setValue('fee_items', updatedItems.map(item => ({
+      id: item.id,
+      name: item.name,
+      amount: item.amount,
+      outstanding_amount: item.outstanding_amount,
+      paid_amount: item.paid_amount || 0
+    })));
   };
 
   const onSubmit = async (data: PaymentFormData) => {
