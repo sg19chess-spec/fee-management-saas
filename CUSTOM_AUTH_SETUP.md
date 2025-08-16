@@ -86,19 +86,19 @@ ALTER TABLE public.identities ENABLE ROW LEVEL SECURITY;
 
 -- Create policies for profiles
 CREATE POLICY "Users can view own profile" ON public.profiles
-    FOR SELECT USING (auth.uid() = id);
+    FOR SELECT USING (id = public.get_current_user_id());
 
 CREATE POLICY "Users can update own profile" ON public.profiles
-    FOR UPDATE USING (auth.uid() = id)
-    WITH CHECK (auth.uid() = id);
+    FOR UPDATE USING (id = public.get_current_user_id())
+    WITH CHECK (id = public.get_current_user_id());
 
 -- Create policies for sessions
 CREATE POLICY "Users can view own sessions" ON public.sessions
-    FOR SELECT USING (auth.uid() = user_id);
+    FOR SELECT USING (user_id = public.get_current_user_id());
 
 -- Create policies for identities
 CREATE POLICY "Users can view own identities" ON public.identities
-    FOR SELECT USING (auth.uid() = user_id);
+    FOR SELECT USING (user_id = public.get_current_user_id());
 
 -- Optional: Trigger to automatically create a profile when a user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
@@ -135,8 +135,8 @@ CREATE OR REPLACE TRIGGER on_auth_user_created
 In **SQL Editor**, run:
 
 ```sql
--- Test if your custom auth.uid() function works
-SELECT auth.uid();
+-- Test if your custom get_current_user_id() function works
+SELECT public.get_current_user_id();
 
 -- Test if profiles table exists
 SELECT * FROM public.profiles LIMIT 1;
@@ -154,7 +154,7 @@ SELECT * FROM public.sessions LIMIT 1;
    - **Default:** `auth.users`, `auth.sessions`, `auth.identities`
 
 2. **Auth Function:**
-   - **Your setup:** Custom `auth.uid()` that reads from `public.sessions`
+   - **Your setup:** `public.get_current_user_id()` that reads from `public.sessions`
    - **Default:** Built-in `auth.uid()` that reads from `auth.sessions`
 
 3. **User Management:**
@@ -163,10 +163,11 @@ SELECT * FROM public.sessions LIMIT 1;
 
 ## 🔧 **What This Fixes**
 
-- ✅ **Custom auth.uid() function** works with your `public.sessions` table
+- ✅ **Custom get_current_user_id() function** works with your `public.sessions` table
 - ✅ **RLS policies** can access user context from your custom Auth
 - ✅ **UUID comparisons** work properly with your setup
 - ✅ **Multi-tenant isolation** functions with your custom Auth
+- ✅ **No conflicts** with default Supabase Auth functions
 
 ## 🚀 **Next Steps**
 
@@ -186,9 +187,9 @@ SELECT * FROM public.sessions LIMIT 1;
    SELECT * FROM public.sessions;
    ```
 
-2. **Test your custom auth.uid():**
+2. **Test your custom get_current_user_id():**
    ```sql
-   SELECT auth.uid();
+   SELECT public.get_current_user_id();
    ```
 
 3. **Verify RLS is enabled:**
@@ -196,6 +197,14 @@ SELECT * FROM public.sessions LIMIT 1;
    SELECT schemaname, tablename, rowsecurity 
    FROM pg_tables 
    WHERE schemaname = 'public';
+   ```
+
+4. **Check if helper functions exist:**
+   ```sql
+   SELECT routine_name, routine_schema 
+   FROM information_schema.routines 
+   WHERE routine_schema = 'public' 
+   AND routine_name LIKE '%user%';
    ```
 
 ---
