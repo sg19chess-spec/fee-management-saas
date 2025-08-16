@@ -418,10 +418,10 @@ export default function PaymentViewPage({ params }: { params: { id: string } }) 
             </div>
 
             <div className="mt-6 space-y-3">
-              <Button onClick={handleDownloadReceipt} className="w-full">
-                <DownloadIcon className="h-4 w-4 mr-2" />
-                Download Receipt
-              </Button>
+                             <Button onClick={handleDownloadReceipt} className="w-full">
+                 <ArrowDownTrayIcon className="h-4 w-4 mr-2" />
+                 Download Receipt
+               </Button>
               <Button variant="outline" onClick={handlePrintReceipt} className="w-full">
                 <PrinterIcon className="h-4 w-4 mr-2" />
                 Print Receipt
