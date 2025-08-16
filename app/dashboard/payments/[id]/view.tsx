@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@supabase/supabase-js';
-import { useAuth } from '@/components/providers/AuthProvider';
+import { useAuth } from '@/hooks/useAuth';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
@@ -110,17 +110,17 @@ export default function PaymentViewPage({ params }: { params: { id: string } }) 
 
       setPayment({
         ...paymentData,
-        student_name: `${paymentData.students.first_name} ${paymentData.students.last_name}`,
-        student_admission: paymentData.students.admission_number,
-        student_class: `${paymentData.students.classes.name} ${paymentData.students.classes.section}`
+        student_name: `${(paymentData.students as any).first_name} ${(paymentData.students as any).last_name}`,
+        student_admission: (paymentData.students as any).admission_number,
+        student_class: `${(paymentData.students as any).classes.name} ${(paymentData.students as any).classes.section}`
       });
 
       setFeeItems(feeItemsData?.map(item => ({
         id: item.id,
-        fee_item_name: item.fee_items.name,
+        fee_item_name: (item.fee_items as any).name,
         original_amount: item.paid_amount,
         paid_amount: item.paid_amount,
-        fee_plan_name: item.fee_plans.name
+        fee_plan_name: (item.fee_plans as any).name
       })) || []);
 
     } catch (err) {
