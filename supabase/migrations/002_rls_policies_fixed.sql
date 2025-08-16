@@ -16,14 +16,14 @@ ALTER TABLE reminder_schedules ENABLE ROW LEVEL SECURITY;
 ALTER TABLE reminder_logs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY;
 
--- Helper functions for RLS policies
+-- Helper functions for RLS policies with proper UUID handling
 CREATE OR REPLACE FUNCTION get_user_institution_id()
 RETURNS UUID AS $$
 BEGIN
     RETURN (
         SELECT institution_id 
         FROM users 
-        WHERE id = auth.uid()
+        WHERE id = (SELECT auth.uid())::uuid
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -34,7 +34,7 @@ BEGIN
     RETURN (
         SELECT role 
         FROM users 
-        WHERE id = auth.uid()
+        WHERE id = (SELECT auth.uid())::uuid
     );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -87,10 +87,10 @@ CREATE POLICY "School admins can manage users in their institution" ON users
     );
 
 CREATE POLICY "Users can view their own profile" ON users
-    FOR SELECT USING (id = auth.uid());
+    FOR SELECT USING (id = (SELECT auth.uid())::uuid);
 
 CREATE POLICY "Users can update their own profile" ON users
-    FOR UPDATE USING (id = auth.uid());
+    FOR UPDATE USING (id = (SELECT auth.uid())::uuid);
 
 -- Classes policies
 CREATE POLICY "Super admins can manage all classes" ON classes
@@ -113,14 +113,14 @@ CREATE POLICY "Institution users can manage students" ON students
     );
 
 CREATE POLICY "Students can view their own data" ON students
-    FOR SELECT USING (id = auth.uid());
+    FOR SELECT USING (id = (SELECT auth.uid())::uuid);
 
 CREATE POLICY "Parents can view their children's data" ON students
     FOR SELECT USING (
         id IN (
             SELECT student_id 
             FROM users 
-            WHERE parent_id = auth.uid()
+            WHERE parent_id = (SELECT auth.uid())::uuid
         )
     );
 
@@ -158,14 +158,14 @@ CREATE POLICY "Institution users can manage student fees" ON student_fees
     );
 
 CREATE POLICY "Students can view their own fees" ON student_fees
-    FOR SELECT USING (student_id = auth.uid());
+    FOR SELECT USING (student_id = (SELECT auth.uid())::uuid);
 
 CREATE POLICY "Parents can view their children's fees" ON student_fees
     FOR SELECT USING (
         student_id IN (
             SELECT student_id 
             FROM users 
-            WHERE parent_id = auth.uid()
+            WHERE parent_id = (SELECT auth.uid())::uuid
         )
     );
 
@@ -186,7 +186,7 @@ CREATE POLICY "Institution users can manage student fee items" ON student_fee_it
 CREATE POLICY "Students can view their own fee items" ON student_fee_items
     FOR SELECT USING (
         student_fee_id IN (
-            SELECT id FROM student_fees WHERE student_id = auth.uid()
+            SELECT id FROM student_fees WHERE student_id = (SELECT auth.uid())::uuid
         )
     );
 
@@ -195,7 +195,7 @@ CREATE POLICY "Parents can view their children's fee items" ON student_fee_items
         student_fee_id IN (
             SELECT sf.id FROM student_fees sf
             JOIN users u ON sf.student_id = u.student_id
-            WHERE u.parent_id = auth.uid()
+            WHERE u.parent_id = (SELECT auth.uid())::uuid
         )
     );
 
@@ -220,14 +220,14 @@ CREATE POLICY "Institution users can manage payments" ON payments
     );
 
 CREATE POLICY "Students can view their own payments" ON payments
-    FOR SELECT USING (student_id = auth.uid());
+    FOR SELECT USING (student_id = (SELECT auth.uid())::uuid);
 
 CREATE POLICY "Parents can view their children's payments" ON payments
     FOR SELECT USING (
         student_id IN (
             SELECT student_id 
             FROM users 
-            WHERE parent_id = auth.uid()
+            WHERE parent_id = (SELECT auth.uid())::uuid
         )
     );
 
@@ -260,7 +260,7 @@ CREATE POLICY "Institution users can manage receipts" ON receipts
 CREATE POLICY "Students can view their own receipts" ON receipts
     FOR SELECT USING (
         payment_id IN (
-            SELECT id FROM payments WHERE student_id = auth.uid()
+            SELECT id FROM payments WHERE student_id = (SELECT auth.uid())::uuid
         )
     );
 
@@ -269,7 +269,7 @@ CREATE POLICY "Parents can view their children's receipts" ON receipts
         payment_id IN (
             SELECT p.id FROM payments p
             JOIN users u ON p.student_id = u.student_id
-            WHERE u.parent_id = auth.uid()
+            WHERE u.parent_id = (SELECT auth.uid())::uuid
         )
     );
 
@@ -304,14 +304,14 @@ CREATE POLICY "Institution users can view reminder logs" ON reminder_logs
     );
 
 CREATE POLICY "Students can view their own reminder logs" ON reminder_logs
-    FOR SELECT USING (student_id = auth.uid());
+    FOR SELECT USING (student_id = (SELECT auth.uid())::uuid);
 
 CREATE POLICY "Parents can view their children's reminder logs" ON reminder_logs
     FOR SELECT USING (
         student_id IN (
             SELECT student_id 
             FROM users 
-            WHERE parent_id = auth.uid()
+            WHERE parent_id = (SELECT auth.uid())::uuid
         )
     );
 
@@ -339,7 +339,7 @@ BEGIN
         new_values
     ) VALUES (
         COALESCE(NEW.institution_id, OLD.institution_id),
-        auth.uid(),
+        (SELECT auth.uid())::uuid,
         TG_TABLE_NAME,
         COALESCE(NEW.id, OLD.id),
         TG_OP,
