@@ -63,6 +63,7 @@ interface FeeItem {
   name: string;
   amount: number;
   outstanding_amount: number;
+  paid_amount?: number;
   due_date: string;
   status: string;
   fee_plan_name: string;
