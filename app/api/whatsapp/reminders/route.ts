@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     // Check if all fee items belong to the institution
     const invalidItems = feeItems?.filter(
-      item => item.student_fees.students.institution_id !== institutionId
+      item => (item.student_fees as any).students.institution_id !== institutionId
     );
 
     if (invalidItems && invalidItems.length > 0) {
@@ -120,7 +120,7 @@ export async function POST(request: NextRequest) {
 
       result = await whatsappService.sendPaymentReminder(
         institutionId,
-        feeItem.student_fees.student_id,
+        (feeItem.student_fees as any).student_id,
         studentFeeItemIds[0],
         templateId
       );
