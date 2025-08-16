@@ -133,7 +133,11 @@ export default function PaymentsPage() {
 
       if (fetchError) throw fetchError;
 
-      setPayments(data || []);
+      setPayments((data || []).map(payment => ({
+        ...payment,
+        students: (payment.students as any)[0] || {},
+        classes: (payment.classes as any)[0] || {}
+      })));
       setTotalCount(count || 0);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
     } catch (err) {
