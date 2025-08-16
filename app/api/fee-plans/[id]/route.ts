@@ -154,13 +154,16 @@ export async function PUT(
       throw checkError;
     }
 
-    // Add updated_at timestamp
-    feePlanData.updated_at = new Date().toISOString();
+    // Create update object with timestamp
+    const updateData = {
+      ...feePlanData,
+      updated_at: new Date().toISOString()
+    };
 
     // Update the fee plan
     const { data: updatedFeePlan, error: updateError } = await supabase
       .from('fee_plans')
-      .update(feePlanData)
+      .update(updateData)
       .eq('id', params.id)
       .eq('institution_id', institutionId)
       .select()
