@@ -131,7 +131,10 @@ export default function StudentsPage() {
 
       if (fetchError) throw fetchError;
 
-      setStudents(data || []);
+      setStudents((data || []).map(student => ({
+        ...student,
+        classes: (student.classes as any)[0] || { name: '', section: '' }
+      })));
       setTotalCount(count || 0);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
     } catch (err) {

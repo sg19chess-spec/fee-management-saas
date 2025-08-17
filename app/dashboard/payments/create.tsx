@@ -141,8 +141,8 @@ export default function CreatePaymentPage() {
 
              setStudents(data?.map(s => ({
          ...s,
-         class_name: (s.classes as any).name,
-         class_section: (s.classes as any).section
+         class_name: (s.classes as any)[0]?.name || '',
+         class_section: (s.classes as any)[0]?.section || ''
        })) || []);
     } catch (err) {
       console.error('Error fetching students:', err);

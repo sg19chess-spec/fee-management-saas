@@ -110,9 +110,9 @@ export default function PaymentViewPage({ params }: { params: { id: string } }) 
 
       setPayment({
         ...paymentData,
-        student_name: `${(paymentData.students as any).first_name} ${(paymentData.students as any).last_name}`,
-        student_admission: (paymentData.students as any).admission_number,
-        student_class: `${(paymentData.students as any).classes.name} ${(paymentData.students as any).classes.section}`
+        student_name: `${(paymentData.students as any)[0]?.first_name || ''} ${(paymentData.students as any)[0]?.last_name || ''}`,
+        student_admission: (paymentData.students as any)[0]?.admission_number || '',
+        student_class: `${(paymentData.students as any)[0]?.classes?.[0]?.name || ''} ${(paymentData.students as any)[0]?.classes?.[0]?.section || ''}`
       });
 
       setFeeItems(feeItemsData?.map(item => ({
