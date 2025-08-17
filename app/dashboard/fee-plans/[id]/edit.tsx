@@ -11,6 +11,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Alert } from '@/components/ui/Alert';
+import { mapFeePlan, mapFeeItems, type FeePlan, type FeeItem } from '@/lib/typeMappers';
 import { Badge } from '@/components/ui/Badge';
 import { 
   ArrowLeftIcon, 
@@ -135,8 +136,8 @@ export default function EditFeePlanPage({ params }: { params: { id: string } }) 
 
       if (feeItemsError) throw feeItemsError;
 
-      setFeePlan(feePlanData);
-      setFeeItems(feeItemsData || []);
+              setFeePlan(mapFeePlan(feePlanData));
+        setFeeItems(mapFeeItems(feeItemsData));
 
       // Set form values
       setValue('name', feePlanData.name);

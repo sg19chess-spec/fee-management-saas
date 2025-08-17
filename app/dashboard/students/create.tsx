@@ -11,6 +11,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Alert } from '@/components/ui/Alert';
+import { mapClasses, mapUsers, type Class, type User } from '@/lib/typeMappers';
 import {
   ArrowLeftIcon,
   UserIcon,
@@ -86,7 +87,7 @@ export default function CreateStudentPage() {
         .order('name');
 
       if (fetchError) throw fetchError;
-      setClasses(data || []);
+      setClasses(mapClasses(data));
     } catch (err) {
       console.error('Error fetching classes:', err);
       setError('Failed to load classes');

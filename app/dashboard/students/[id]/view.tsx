@@ -9,6 +9,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Alert } from '@/components/ui/Alert';
+import { mapPayments, mapFeePlans, type Payment, type FeePlan } from '@/lib/typeMappers';
 import { 
   ArrowLeftIcon, 
   PencilIcon, 
@@ -163,19 +164,9 @@ export default function StudentViewPage({ params }: { params: { id: string } }) 
         class_section: studentData.classes?.section || ''
       });
 
-      setPayments(paymentsData?.map(p => ({
-        ...p,
-        student_name: `${(p.students as any)[0]?.first_name || ''} ${(p.students as any)[0]?.last_name || ''}`
-      })) || []);
+              setPayments(mapPayments(paymentsData));
 
-      setFeePlans(feePlansData?.map(fp => ({
-        id: (fp.fee_plans as any)[0]?.id || '',
-        name: (fp.fee_plans as any)[0]?.name || '',
-        academic_year: (fp.fee_plans as any)[0]?.academic_year || '',
-        total_amount: (fp.fee_plans as any)[0]?.total_amount || 0,
-        assigned_date: fp.assigned_date,
-        status: fp.status
-      })) || []);
+              setFeePlans(mapFeePlans(feePlansData));
 
     } catch (err) {
       console.error('Error fetching student data:', err);

@@ -5,25 +5,10 @@ import { createClient } from '@supabase/supabase-js';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
+import { mapPayments, type Payment } from '@/lib/typeMappers';
 import { format } from 'date-fns';
 
-interface Payment {
-  id: string;
-  receipt_number: string;
-  paid_amount: number;
-  payment_method: string;
-  payment_status: string;
-  payment_date: string;
-  students: {
-    first_name: string;
-    last_name: string;
-    admission_number: string;
-  };
-  classes: {
-    name: string;
-    section: string;
-  };
-}
+
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -76,7 +61,7 @@ export function RecentPayments() {
         throw fetchError;
       }
 
-      setPayments(data || []);
+      setPayments(mapPayments(data));
     } catch (err) {
       console.error('Error fetching recent payments:', err);
       setError('Failed to load recent payments');

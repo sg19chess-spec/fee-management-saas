@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { mapChartData, type ChartDataPoint } from '@/lib/typeMappers';
 import {
   BarChart,
   Bar,
@@ -79,7 +80,7 @@ export function FeeCollectionChart() {
       // Process data by month
       const monthlyData = processMonthlyData(currentYearData || [], previousYearData || []);
 
-      setData(monthlyData);
+      setData(mapChartData(monthlyData));
     } catch (err) {
       console.error('Error fetching chart data:', err);
       setError('Failed to load chart data');

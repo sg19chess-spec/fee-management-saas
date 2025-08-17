@@ -5,28 +5,10 @@ import { createClient } from '@supabase/supabase-js';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Badge } from '@/components/ui/Badge';
+import { mapPendingDues, mapClasses, type PendingDue, type Class } from '@/lib/typeMappers';
 import { format } from 'date-fns';
 
-interface PendingDue {
-  id: string;
-  outstanding_amount: number;
-  due_date: string;
-  status: string;
-  students: {
-    first_name: string;
-    last_name: string;
-    admission_number: string;
-    guardian_phone: string;
-  };
-  classes: {
-    name: string;
-    section: string;
-  };
-  fee_items: {
-    name: string;
-    amount: number;
-  };
-}
+
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,7 +21,7 @@ export function PendingDues() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedClass, setSelectedClass] = useState<string>('all');
-  const [classes, setClasses] = useState<{ id: string; name: string; section: string }[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
 
   useEffect(() => {
     if (profile?.institution_id) {
@@ -66,7 +48,7 @@ export function PendingDues() {
         .order('name');
 
       if (fetchError) throw fetchError;
-      setClasses(data || []);
+      setClasses(mapClasses(data));
     } catch (err) {
       console.error('Error fetching classes:', err);
     }
@@ -113,7 +95,7 @@ export function PendingDues() {
 
       if (fetchError) throw fetchError;
 
-      setPendingDues(data || []);
+      setPendingDues(mapPendingDues(data));
     } catch (err) {
       console.error('Error fetching pending dues:', err);
       setError('Failed to load pending dues');

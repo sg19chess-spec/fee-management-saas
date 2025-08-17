@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { mapFeePlans, type FeePlan } from '@/lib/typeMappers';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -128,7 +129,7 @@ export default function FeePlansPage() {
         },
       })) || [];
 
-      setFeePlans(processedData);
+      setFeePlans(mapFeePlans(processedData));
       setTotalCount(count || 0);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
     } catch (err) {

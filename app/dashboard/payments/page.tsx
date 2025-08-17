@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { mapPayments, type Payment } from '@/lib/typeMappers';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -16,23 +17,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 
-interface Payment {
-  id: string;
-  receipt_number: string;
-  paid_amount: number;
-  payment_method: string;
-  payment_status: string;
-  payment_date: string;
-  students: {
-    first_name: string;
-    last_name: string;
-    admission_number: string;
-  };
-  classes: {
-    name: string;
-    section: string;
-  };
-}
+
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -133,11 +118,7 @@ export default function PaymentsPage() {
 
       if (fetchError) throw fetchError;
 
-      setPayments((data || []).map(payment => ({
-        ...payment,
-        students: (payment.students as any)[0] || {},
-        classes: (payment.classes as any)[0] || {}
-      })));
+      setPayments(mapPayments(data));
       setTotalCount(count || 0);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
     } catch (err) {

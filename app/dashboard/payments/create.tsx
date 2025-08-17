@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Alert } from '@/components/ui/Alert';
 import { Badge } from '@/components/ui/Badge';
+import { mapStudents, mapFeeItems, mapClasses, type Student, type FeeItem, type Class } from '@/lib/typeMappers';
 import { Receipt } from '@/components/payments/Receipt';
 import { 
   ArrowLeftIcon, 
@@ -49,25 +50,7 @@ const paymentSchema = z.object({
 
 type PaymentFormData = z.infer<typeof paymentSchema>;
 
-interface Student {
-  id: string;
-  first_name: string;
-  last_name: string;
-  admission_number: string;
-  class_name: string;
-  class_section: string;
-}
 
-interface FeeItem {
-  id: string;
-  name: string;
-  amount: number;
-  outstanding_amount: number;
-  paid_amount?: number;
-  due_date: string;
-  status: string;
-  fee_plan_name: string;
-}
 
 interface PaymentSummary {
   total_outstanding: number;
@@ -139,11 +122,7 @@ export default function CreatePaymentPage() {
 
       if (error) throw error;
 
-             setStudents(data?.map(s => ({
-         ...s,
-         class_name: (s.classes as any)[0]?.name || '',
-         class_section: (s.classes as any)[0]?.section || ''
-       })) || []);
+                     setStudents(mapStudents(data));
     } catch (err) {
       console.error('Error fetching students:', err);
       setError('Failed to load students');
@@ -173,15 +152,7 @@ export default function CreatePaymentPage() {
 
       if (error) throw error;
 
-      setFeeItems(data?.map(item => ({
-        id: item.id,
-                    name: (item.fee_items as any)[0]?.name || '',
-        amount: item.outstanding_amount,
-        outstanding_amount: item.outstanding_amount,
-        due_date: item.due_date,
-        status: item.status,
-                  fee_plan_name: (item.fee_plans as any)[0]?.name || ''
-      })) || []);
+              setFeeItems(mapFeeItems(data));
     } catch (err) {
       console.error('Error fetching fee items:', err);
       setError('Failed to load fee items');

@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { Alert } from '@/components/ui/Alert';
+import { mapPaymentFeeItems, type PaymentFeeItem } from '@/lib/typeMappers';
 import { Receipt } from '@/components/payments/Receipt';
 import { 
   ArrowLeftIcon, 
@@ -48,13 +49,7 @@ interface Payment {
   updated_at: string;
 }
 
-interface PaymentFeeItem {
-  id: string;
-  fee_item_name: string;
-  original_amount: number;
-  paid_amount: number;
-  fee_plan_name: string;
-}
+
 
 export default function PaymentViewPage({ params }: { params: { id: string } }) {
   const router = useRouter();
@@ -115,13 +110,7 @@ export default function PaymentViewPage({ params }: { params: { id: string } }) 
         student_class: `${(paymentData.students as any)[0]?.classes?.[0]?.name || ''} ${(paymentData.students as any)[0]?.classes?.[0]?.section || ''}`
       });
 
-      setFeeItems(feeItemsData?.map(item => ({
-        id: item.id,
-        fee_item_name: (item.fee_items as any)[0]?.name || '',
-        original_amount: item.paid_amount,
-        paid_amount: item.paid_amount,
-        fee_plan_name: (item.fee_plans as any)[0]?.name || ''
-      })) || []);
+              setFeeItems(mapPaymentFeeItems(feeItemsData));
 
     } catch (err) {
       console.error('Error fetching payment data:', err);

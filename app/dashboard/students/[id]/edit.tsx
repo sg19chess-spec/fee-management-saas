@@ -11,6 +11,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Alert } from '@/components/ui/Alert';
+import { mapClasses, mapStudent, type Class, type Student } from '@/lib/typeMappers';
 import { ArrowLeftIcon, UserIcon, PhoneIcon, EnvelopeIcon, AcademicCapIcon } from '@heroicons/react/24/outline';
 
 // Supabase client setup
@@ -78,7 +79,7 @@ export default function EditStudentPage({ params }: { params: { id: string } }) 
         .order('name');
 
       if (error) throw error;
-      setClasses(data || []);
+      setClasses(mapClasses(data));
     } catch (err) {
       console.error('Error fetching classes:', err);
       setError('Failed to load classes');
@@ -96,7 +97,7 @@ export default function EditStudentPage({ params }: { params: { id: string } }) 
 
       if (error) throw error;
 
-      setStudent(data);
+              setStudent(mapStudent(data));
       
       // Set form values
       Object.keys(data).forEach((key) => {

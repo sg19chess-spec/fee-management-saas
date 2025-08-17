@@ -8,6 +8,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Badge } from '@/components/ui/Badge';
+import { mapStudents, mapClasses, type Student, type Class } from '@/lib/typeMappers';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
@@ -15,20 +16,7 @@ import {
   EyeIcon,
 } from '@heroicons/react/24/outline';
 
-interface Student {
-  id: string;
-  admission_number: string;
-  first_name: string;
-  last_name: string;
-  guardian_phone: string;
-  guardian_email: string;
-  enrollment_status: string;
-  admission_date: string;
-  classes: {
-    name: string;
-    section: string;
-  };
-}
+
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -42,7 +30,7 @@ export default function StudentsPage() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState<string>('all');
-  const [classes, setClasses] = useState<{ id: string; name: string; section: string }[]>([]);
+  const [classes, setClasses] = useState<Class[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -80,7 +68,7 @@ export default function StudentsPage() {
         .order('name');
 
       if (fetchError) throw fetchError;
-      setClasses(data || []);
+      setClasses(mapClasses(data));
     } catch (err) {
       console.error('Error fetching classes:', err);
     }
@@ -131,10 +119,7 @@ export default function StudentsPage() {
 
       if (fetchError) throw fetchError;
 
-      setStudents((data || []).map(student => ({
-        ...student,
-        classes: (student.classes as any)[0] || { name: '', section: '' }
-      })));
+      setStudents(mapStudents(data));
       setTotalCount(count || 0);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
     } catch (err) {
