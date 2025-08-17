@@ -117,10 +117,10 @@ export default function PaymentViewPage({ params }: { params: { id: string } }) 
 
       setFeeItems(feeItemsData?.map(item => ({
         id: item.id,
-        fee_item_name: (item.fee_items as any).name,
+        fee_item_name: (item.fee_items as any)[0]?.name || '',
         original_amount: item.paid_amount,
         paid_amount: item.paid_amount,
-        fee_plan_name: (item.fee_plans as any).name
+        fee_plan_name: (item.fee_plans as any)[0]?.name || ''
       })) || []);
 
     } catch (err) {

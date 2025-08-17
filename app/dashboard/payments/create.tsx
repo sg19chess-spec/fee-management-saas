@@ -175,12 +175,12 @@ export default function CreatePaymentPage() {
 
       setFeeItems(data?.map(item => ({
         id: item.id,
-                    name: (item.fee_items as any).name,
+                    name: (item.fee_items as any)[0]?.name || '',
         amount: item.outstanding_amount,
         outstanding_amount: item.outstanding_amount,
         due_date: item.due_date,
         status: item.status,
-                  fee_plan_name: (item.fee_plans as any).name
+                  fee_plan_name: (item.fee_plans as any)[0]?.name || ''
       })) || []);
     } catch (err) {
       console.error('Error fetching fee items:', err);

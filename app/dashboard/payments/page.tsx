@@ -366,16 +366,16 @@ export default function PaymentsPage() {
                       <div className="flex-shrink-0 h-10 w-10">
                         <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                           <span className="text-sm font-medium text-blue-600">
-                            {(payment.students as any).first_name[0]}{(payment.students as any).last_name[0]}
+                            {(payment.students as any)[0]?.first_name?.[0] || ''}{(payment.students as any)[0]?.last_name?.[0] || ''}
                           </span>
                         </div>
                       </div>
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">
-                          {(payment.students as any).first_name} {(payment.students as any).last_name}
+                          {(payment.students as any)[0]?.first_name || ''} {(payment.students as any)[0]?.last_name || ''}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {(payment.students as any).admission_number} • {(payment.classes as any).name} {(payment.classes as any).section}
+                          {(payment.students as any)[0]?.admission_number || ''} • {(payment.classes as any)[0]?.name || ''} {(payment.classes as any)[0]?.section || ''}
                         </div>
                       </div>
                     </div>
