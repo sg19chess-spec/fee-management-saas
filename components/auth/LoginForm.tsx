@@ -58,7 +58,7 @@ export function LoginForm() {
       </div>
 
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="error">
           <div className="flex">
             <div className="ml-3">
               <p className="text-sm font-medium">{error}</p>
