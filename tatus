@@ -1,0 +1,5 @@
+[33m9bfd22d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31mupstream/main[m[33m, [m[1;31mupstream/HEAD[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;31mnew/main[m[33m, [m[1;31mnew/HEAD[m[33m)[m Add comprehensive type-safe mapping functions for Supabase query results
+[33m028d2a1[m Fix Alert variant type error: Change 'destructive' to 'error' in LoginForm
+[33m131437c[m Fix remaining TypeScript errors: Update all nested Supabase query result access patterns
+[33m24e2acd[m Fix all TypeScript errors: Transform nested Supabase query results from arrays to single objects across all components
+[33m8171f5d[m Fix all TypeScript errors: Transform nested Supabase query results from arrays to single objects across all components

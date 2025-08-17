@@ -43,12 +43,6 @@ const studentSchema = z.object({
 
 type StudentFormData = z.infer<typeof studentSchema>;
 
-interface Class {
-  id: string;
-  name: string;
-  section: string;
-}
-
 export default function EditStudentPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { profile } = useAuth();
@@ -97,8 +91,6 @@ export default function EditStudentPage({ params }: { params: { id: string } }) 
 
       if (error) throw error;
 
-              setStudent(mapStudent(data));
-      
       // Set form values
       Object.keys(data).forEach((key) => {
         if (key in data) {

@@ -30,7 +30,7 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
-// TypeScript interfaces
+// Local Student interface for this component
 interface Student {
   id: string;
   admission_number: string;
@@ -58,26 +58,14 @@ interface Student {
   updated_at: string;
 }
 
-interface Payment {
-  id: string;
-  receipt_number: string;
-  student_id: string;
-  student_name: string;
-  total_amount: number;
-  paid_amount: number;
-  payment_method: string;
-  payment_status: 'pending' | 'completed' | 'failed' | 'refunded';
-  payment_date: string;
-  created_at: string;
-}
-
-interface FeePlan {
+// Local FeePlan interface for fee plan assignments
+interface FeePlanAssignment {
   id: string;
   name: string;
   academic_year: string;
   total_amount: number;
   assigned_date: string;
-  status: 'active' | 'inactive';
+  status: string;
 }
 
 export default function StudentViewPage({ params }: { params: { id: string } }) {
@@ -85,7 +73,7 @@ export default function StudentViewPage({ params }: { params: { id: string } }) 
   const { profile } = useAuth();
   const [student, setStudent] = useState<Student | null>(null);
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [feePlans, setFeePlans] = useState<FeePlan[]>([]);
+  const [feePlans, setFeePlans] = useState<FeePlanAssignment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -166,7 +154,14 @@ export default function StudentViewPage({ params }: { params: { id: string } }) 
 
               setPayments(mapPayments(paymentsData));
 
-              setFeePlans(mapFeePlans(feePlansData));
+              setFeePlans(feePlansData?.map((item: any) => ({
+                id: item.fee_plans?.id || '',
+                name: item.fee_plans?.name || '',
+                academic_year: item.fee_plans?.academic_year || '',
+                total_amount: item.fee_plans?.total_amount || 0,
+                assigned_date: item.assigned_date || '',
+                status: item.status || ''
+              })) || []);
 
     } catch (err) {
       console.error('Error fetching student data:', err);

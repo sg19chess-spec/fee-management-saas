@@ -333,7 +333,7 @@ export default function CreatePaymentPage() {
                   <option value="">Select a student</option>
                   {students.map((student) => (
                     <option key={student.id} value={student.id}>
-                      {student.first_name} {student.last_name} - {student.admission_number} ({student.class_name} {student.class_section})
+                      {student.first_name} {student.last_name} - {student.admission_number} ({student.classes.name} {student.classes.section})
                     </option>
                   ))}
                 </select>
@@ -348,7 +348,7 @@ export default function CreatePaymentPage() {
                     {selectedStudent.first_name} {selectedStudent.last_name}
                   </h3>
                   <p className="text-sm text-gray-600">
-                    Admission: {selectedStudent.admission_number} • Class: {selectedStudent.class_name} {selectedStudent.class_section}
+                    Admission: {selectedStudent.admission_number} • Class: {selectedStudent.classes.name} {selectedStudent.classes.section}
                   </p>
                 </div>
               )}

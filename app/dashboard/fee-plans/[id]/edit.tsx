@@ -51,21 +51,8 @@ const feePlanSchema = z.object({
 
 type FeePlanFormData = z.infer<typeof feePlanSchema>;
 
-interface FeePlan {
-  id: string;
-  name: string;
-  description?: string;
-  academic_year: string;
-  total_amount: number;
-  discount_percentage?: number;
-  discount_amount?: number;
-  discount_reason?: string;
-  status: 'active' | 'inactive';
-  created_at: string;
-  updated_at: string;
-}
-
-interface FeeItem {
+// Using imported types from typeMappers
+interface LocalFeeItem {
   id: string;
   name: string;
   amount: number;
@@ -83,7 +70,7 @@ export default function EditFeePlanPage({ params }: { params: { id: string } }) 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [feePlan, setFeePlan] = useState<FeePlan | null>(null);
-  const [feeItems, setFeeItems] = useState<FeeItem[]>([]);
+  const [feeItems, setFeeItems] = useState<LocalFeeItem[]>([]);
 
   const { register, handleSubmit, formState: { errors }, control, watch, setValue } = useForm<FeePlanFormData>({
     resolver: zodResolver(feePlanSchema),
@@ -137,7 +124,15 @@ export default function EditFeePlanPage({ params }: { params: { id: string } }) 
       if (feeItemsError) throw feeItemsError;
 
               setFeePlan(mapFeePlan(feePlanData));
-        setFeeItems(mapFeeItems(feeItemsData));
+        setFeeItems(feeItemsData?.map(item => ({
+          id: item.id,
+          name: item.name,
+          amount: item.amount,
+          description: item.description || '',
+          due_date: item.due_date,
+          is_optional: item.is_optional || false,
+          fee_plan_id: item.fee_plan_id
+        })) || []);
 
       // Set form values
       setValue('name', feePlanData.name);

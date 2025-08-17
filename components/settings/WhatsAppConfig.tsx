@@ -194,7 +194,7 @@ export default function WhatsAppConfig() {
       </div>
 
       {message && (
-        <Alert variant={message.type === 'success' ? 'success' : 'destructive'}>
+        <Alert variant={message.type === 'success' ? 'success' : 'error'}>
           {message.text}
         </Alert>
       )}

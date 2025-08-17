@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/Button';
-import { DownloadIcon, PrinterIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
+import { PrinterIcon, DocumentArrowDownIcon } from '@heroicons/react/24/outline';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';

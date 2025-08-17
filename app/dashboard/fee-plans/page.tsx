@@ -17,13 +17,9 @@ import {
   DocumentTextIcon,
 } from '@heroicons/react/24/outline';
 
-interface FeePlan {
-  id: string;
-  name: string;
-  description: string;
-  academic_year: string;
+// Extended interface for fee plans with fee items and count
+interface FeePlanWithItems extends FeePlan {
   is_active: boolean;
-  created_at: string;
   fee_items: {
     id: string;
     name: string;
@@ -42,7 +38,7 @@ const supabase = createClient(
 
 export default function FeePlansPage() {
   const { profile } = useAuth();
-  const [feePlans, setFeePlans] = useState<FeePlan[]>([]);
+  const [feePlans, setFeePlans] = useState<FeePlanWithItems[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -129,7 +125,14 @@ export default function FeePlansPage() {
         },
       })) || [];
 
-      setFeePlans(mapFeePlans(processedData));
+      setFeePlans(processedData?.map(plan => ({
+        ...mapFeePlans([plan])[0],
+        is_active: plan.is_active || false,
+        fee_items: plan.fee_items || [],
+        _count: {
+          fee_items: plan.fee_items?.length || 0,
+        },
+      })) || []);
       setTotalCount(count || 0);
       setTotalPages(Math.ceil((count || 0) / itemsPerPage));
     } catch (err) {

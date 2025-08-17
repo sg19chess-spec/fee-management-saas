@@ -80,7 +80,7 @@ export function FeeCollectionChart() {
       // Process data by month
       const monthlyData = processMonthlyData(currentYearData || [], previousYearData || []);
 
-      setData(mapChartData(monthlyData));
+      setData(monthlyData);
     } catch (err) {
       console.error('Error fetching chart data:', err);
       setError('Failed to load chart data');

@@ -27,7 +27,7 @@ interface StudentFeeItem {
   status: string;
   fee_items: {
     name: string;
-  };
+  }[];
   student_fees: {
     students: {
       users: {
@@ -41,7 +41,7 @@ interface StudentFeeItem {
       };
       admission_number: string;
     };
-  };
+  }[];
 }
 
 interface ReminderTemplate {
@@ -124,7 +124,7 @@ export default function ReminderManager() {
         .eq('reminder_type', 'whatsapp')
         .eq('is_active', true);
 
-      if (feeItemsData) setFeeItems(feeItemsData);
+      if (feeItemsData) setFeeItems(feeItemsData as unknown as StudentFeeItem[]);
       if (templatesData) setTemplates(templatesData);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -227,7 +227,7 @@ export default function ReminderManager() {
       </div>
 
       {message && (
-        <Alert variant={message.type === 'success' ? 'success' : 'destructive'}>
+        <Alert variant={message.type === 'success' ? 'success' : 'error'}>
           {message.text}
         </Alert>
       )}
