@@ -12,9 +12,8 @@ import {
   ExclamationTriangleIcon,
   ChartBarIcon,
   CalendarIcon,
-  TrendingUpIcon,
-  TrendingDownIcon,
 } from '@heroicons/react/24/outline';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface DashboardStatsProps {
   stats?: {
@@ -265,9 +264,9 @@ export function DashboardStats({ stats: initialStats }: DashboardStatsProps) {
                         item.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
                       }`}>
                         {item.changeType === 'positive' ? (
-                          <TrendingUpIcon className="h-4 w-4 mr-1" />
+                          <TrendingUp className="h-4 w-4 mr-1" />
                         ) : (
-                          <TrendingDownIcon className="h-4 w-4 mr-1" />
+                          <TrendingDown className="h-4 w-4 mr-1" />
                         )}
                         {item.change}
                       </div>
