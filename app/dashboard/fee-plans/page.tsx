@@ -16,6 +16,9 @@ import {
   EyeIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline';
+import { FadeIn } from '@/components/ui/motion';
+import { Select } from '@/components/ui/Select';
+import { Loader2 } from 'lucide-react';
 
 // Extended interface for fee plans with fee items and count
 interface FeePlanWithItems extends FeePlan {
@@ -169,7 +172,7 @@ export default function FeePlansPage() {
   if (loading && feePlans.length === 0) {
     return (
       <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" />
+        <Loader2 className="animate-spin h-8 w-8 text-blue-600" />
       </div>
     );
   }
@@ -179,10 +182,8 @@ export default function FeePlansPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Fee Plans</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Manage fee structures and plans
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Fee Plans</h1>
+          <p className="text-lg text-gray-600">Manage fee structures and plans</p>
         </div>
         <Link href="/dashboard/fee-plans/create">
           <Button>
@@ -193,51 +194,42 @@ export default function FeePlansPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow">
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Search Plans
-            </label>
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Search by name or description..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">Search Plans</label>
+            <Input
+              type="text"
+              placeholder="Search by name or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              icon={<MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />}
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Academic Year
-            </label>
-            <select
+            <Select
+              label="Academic Year"
               value={selectedYear}
               onChange={(e) => setSelectedYear(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Years</option>
-              <option value="2024-25">2024-25</option>
-              <option value="2023-24">2023-24</option>
-              <option value="2022-23">2022-23</option>
-            </select>
+              options={[
+                { value: 'all', label: 'All Years' },
+                { value: '2024-25', label: '2024-25' },
+                { value: '2023-24', label: '2023-24' },
+                { value: '2022-23', label: '2022-23' },
+              ]}
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Status
-            </label>
-            <select
+            <Select
+              label="Status"
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
+              options={[
+                { value: 'all', label: 'All Status' },
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' },
+              ]}
+            />
           </div>
           <div className="flex items-end">
             <Button variant="outline" onClick={clearFilters} className="w-full">
@@ -254,7 +246,7 @@ export default function FeePlansPage() {
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-red-50 border border-red-200 rounded-2xl p-4">
           <div className="flex">
             <div className="ml-3">
               <h3 className="text-sm font-medium text-red-800">Error loading fee plans</h3>
@@ -265,65 +257,42 @@ export default function FeePlansPage() {
       )}
 
       {/* Fee Plans Table */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+      <FadeIn>
+        <div className="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm">
+          <table className="min-w-full border-collapse text-sm">
+            <thead className="bg-gray-100 text-gray-700 font-semibold uppercase text-xs tracking-wide">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Plan Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Academic Year
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Total Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Fee Items
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Created
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-4 py-3">Plan Name</th>
+                <th className="px-4 py-3">Academic Year</th>
+                <th className="px-4 py-3">Total Amount</th>
+                <th className="px-4 py-3">Fee Items</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Created</th>
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {feePlans.map((plan) => (
-                <tr key={plan.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
+            <tbody>
+              {feePlans.map((plan, idx) => (
+                <tr
+                  key={plan.id}
+                  className="odd:bg-white even:bg-gray-50 hover:bg-gray-100 transition"
+                >
+                  <td className="px-4 py-3 text-sm text-gray-700">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">
-                        {plan.name}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        {plan.description}
-                      </div>
+                      <div className="font-medium text-gray-900">{plan.name}</div>
+                      <div className="text-sm text-gray-500">{plan.description}</div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {plan.academic_year}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {formatCurrency(getTotalAmount(plan.fee_items))}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {plan._count?.fee_items || 0} items
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-3 text-sm text-gray-700">{plan.academic_year}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700">{formatCurrency(getTotalAmount(plan.fee_items))}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700">{plan._count?.fee_items || 0} items</td>
+                  <td className="px-4 py-3 text-sm text-gray-700">
                     <Badge variant={plan.is_active ? 'success' : 'default'}>
                       {plan.is_active ? 'Active' : 'Inactive'}
                     </Badge>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {formatDate(plan.created_at)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-4 py-3 text-sm text-gray-700">{formatDate(plan.created_at)}</td>
+                  <td className="px-4 py-3 text-right">
                     <div className="flex justify-end space-x-2">
                       <Link href={`/dashboard/fee-plans/${plan.id}/view`}>
                         <Button variant="outline" size="sm">
@@ -342,78 +311,53 @@ export default function FeePlansPage() {
             </tbody>
           </table>
         </div>
+      </FadeIn>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div className="flex-1 flex justify-between sm:hidden">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <button
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing{' '}
-                  <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span>
-                  {' '}to{' '}
-                  <span className="font-medium">
-                    {Math.min(currentPage * itemsPerPage, totalCount)}
-                  </span>
-                  {' '}of{' '}
-                  <span className="font-medium">{totalCount}</span>
-                  {' '}results
-                </p>
-              </div>
-              <div>
-                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                  <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const page = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                          currentPage === page
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  })}
-                  <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </nav>
-              </div>
-            </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between border-t border-gray-200 pt-6 mt-6">
+          <div className="text-sm text-gray-700">
+            Showing{' '}
+            <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span>
+            {' '}to{' '}
+            <span className="font-medium">{Math.min(currentPage * itemsPerPage, totalCount)}</span>
+            {' '}of{' '}
+            <span className="font-medium">{totalCount}</span>
+            {' '}results
           </div>
-        )}
-      </div>
+          <div className="flex space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+            >
+              Previous
+            </Button>
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              const page = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+              return (
+                <Button
+                  key={page}
+                  variant={currentPage === page ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </Button>
+              );
+            })}
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

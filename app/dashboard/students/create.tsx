@@ -19,6 +19,10 @@ import {
   EnvelopeIcon,
   AcademicCapIcon,
 } from '@heroicons/react/24/outline';
+import { FadeIn } from '@/components/ui/motion';
+import { Select } from '@/components/ui/Select';
+import { Loader2 } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 const studentSchema = z.object({
   admission_number: z.string().min(1, 'Admission number is required'),
@@ -59,6 +63,8 @@ export default function CreateStudentPage() {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
+    setValue,
   } = useForm<StudentFormData>({
     resolver: zodResolver(studentSchema),
     defaultValues: {
@@ -162,6 +168,7 @@ export default function CreateStudentPage() {
       if (studentError) throw studentError;
 
       setSuccess('Student created successfully!');
+      toast.success('Student created successfully!');
       reset();
       
       // Redirect to students list after a short delay
@@ -171,6 +178,7 @@ export default function CreateStudentPage() {
     } catch (err) {
       console.error('Error creating student:', err);
       setError(err instanceof Error ? err.message : 'Failed to create student');
+      toast.error(err instanceof Error ? err.message : 'Failed to create student');
     } finally {
       setSubmitting(false);
     }
@@ -185,220 +193,200 @@ export default function CreateStudentPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center space-x-4">
-        <button
-          onClick={() => router.back()}
-          className="p-2 text-gray-400 hover:text-gray-600"
-        >
-          <ArrowLeftIcon className="h-5 w-5" />
-        </button>
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Add New Student</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Create a new student profile and account
-          </p>
+    <FadeIn>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => router.back()}
+            className="p-2 text-gray-400 hover:text-gray-600"
+            aria-label="Back"
+          >
+            <ArrowLeftIcon className="h-5 w-5" />
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Add New Student</h1>
+            <p className="text-lg text-gray-600">Create a new student profile and account</p>
+          </div>
+        </div>
+
+        {/* Form */}
+        <div className="bg-white shadow rounded-2xl border border-gray-200">
+          <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+            {/* Basic Information */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <UserIcon className="h-5 w-5 mr-2" />
+                Basic Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Admission Number"
+                  {...register('admission_number')}
+                  error={errors.admission_number?.message}
+                  placeholder="Enter admission number"
+                  className="mb-4"
+                />
+                <Input
+                  label="First Name"
+                  {...register('first_name')}
+                  error={errors.first_name?.message}
+                  placeholder="Enter first name"
+                  className="mb-4"
+                />
+                <Input
+                  label="Last Name"
+                  {...register('last_name')}
+                  error={errors.last_name?.message}
+                  placeholder="Enter last name"
+                  className="mb-4"
+                />
+                <Input
+                  label="Date of Birth"
+                  type="date"
+                  {...register('date_of_birth')}
+                  error={errors.date_of_birth?.message}
+                  className="mb-4"
+                />
+                <Select
+                  label="Gender"
+                  value={watch('gender')}
+                  onChange={e => setValue('gender', e.target.value)}
+                  options={[
+                    { value: 'male', label: 'Male' },
+                    { value: 'female', label: 'Female' },
+                    { value: 'other', label: 'Other' },
+                  ]}
+                  error={errors.gender?.message}
+                  className="mb-4"
+                />
+                <Select
+                  label="Class"
+                  value={watch('class_id')}
+                  onChange={e => setValue('class_id', e.target.value)}
+                  options={classes.map(cls => ({ value: cls.id, label: `${cls.name} ${cls.section}` }))}
+                  error={errors.class_id?.message}
+                  className="mb-4"
+                />
+              </div>
+            </div>
+            {/* Guardian Information */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <PhoneIcon className="h-5 w-5 mr-2" />
+                Guardian Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Guardian Name"
+                  {...register('guardian_name')}
+                  error={errors.guardian_name?.message}
+                  placeholder="Enter guardian name"
+                  className="mb-4"
+                />
+                <Input
+                  label="Guardian Phone"
+                  type="tel"
+                  {...register('guardian_phone')}
+                  error={errors.guardian_phone?.message}
+                  placeholder="Enter guardian phone number"
+                  className="mb-4"
+                />
+                <Input
+                  label="Guardian Email"
+                  type="email"
+                  {...register('guardian_email')}
+                  error={errors.guardian_email?.message}
+                  placeholder="Enter guardian email"
+                  className="mb-4"
+                />
+                <Select
+                  label="Relationship"
+                  value={watch('guardian_relationship')}
+                  onChange={e => setValue('guardian_relationship', e.target.value)}
+                  options={[
+                    { value: 'parent', label: 'Parent' },
+                    { value: 'guardian', label: 'Guardian' },
+                    { value: 'grandparent', label: 'Grandparent' },
+                    { value: 'sibling', label: 'Sibling' },
+                    { value: 'other', label: 'Other' },
+                  ]}
+                  error={errors.guardian_relationship?.message}
+                  className="mb-4"
+                />
+              </div>
+            </div>
+            {/* Additional Information */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <EnvelopeIcon className="h-5 w-5 mr-2" />
+                Additional Information
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Input
+                  label="Address"
+                  {...register('address')}
+                  error={errors.address?.message}
+                  placeholder="Enter address"
+                  className="mb-4"
+                />
+                <Input
+                  label="Emergency Contact"
+                  type="tel"
+                  {...register('emergency_contact')}
+                  error={errors.emergency_contact?.message}
+                  placeholder="Enter emergency contact"
+                  className="mb-4"
+                />
+                <Input
+                  label="Blood Group"
+                  {...register('blood_group')}
+                  error={errors.blood_group?.message}
+                  placeholder="e.g., A+, B-, O+"
+                  className="mb-4"
+                />
+                <Input
+                  label="Previous School"
+                  {...register('previous_school')}
+                  error={errors.previous_school?.message}
+                  placeholder="Enter previous school (if any)"
+                  className="mb-4"
+                />
+                <Input
+                  label="Admission Date"
+                  type="date"
+                  {...register('admission_date')}
+                  error={errors.admission_date?.message}
+                  className="mb-4"
+                />
+              </div>
+            </div>
+            {/* Form Actions */}
+            <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => router.back()}
+                disabled={submitting}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={submitting} variant="default">
+                {submitting ? (
+                  <>
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                    Creating...
+                  </>
+                ) : (
+                  'Create Student'
+                )}
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
-
-      {/* Alerts */}
-      {error && (
-        <Alert variant="error">
-          {error}
-        </Alert>
-      )}
-
-      {success && (
-        <Alert variant="success">
-          {success}
-        </Alert>
-      )}
-
-      {/* Form */}
-      <div className="bg-white shadow rounded-lg">
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
-          {/* Basic Information */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <UserIcon className="h-5 w-5 mr-2" />
-              Basic Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Admission Number"
-                {...register('admission_number')}
-                error={errors.admission_number?.message}
-                placeholder="Enter admission number"
-              />
-              <Input
-                label="First Name"
-                {...register('first_name')}
-                error={errors.first_name?.message}
-                placeholder="Enter first name"
-              />
-              <Input
-                label="Last Name"
-                {...register('last_name')}
-                error={errors.last_name?.message}
-                placeholder="Enter last name"
-              />
-              <Input
-                label="Date of Birth"
-                type="date"
-                {...register('date_of_birth')}
-                error={errors.date_of_birth?.message}
-              />
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Gender
-                </label>
-                <select
-                  {...register('gender')}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-                {errors.gender && (
-                  <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Class
-                </label>
-                <select
-                  {...register('class_id')}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select a class</option>
-                  {classes.map((cls) => (
-                    <option key={cls.id} value={cls.id}>
-                      {cls.name} {cls.section}
-                    </option>
-                  ))}
-                </select>
-                {errors.class_id && (
-                  <p className="mt-1 text-sm text-red-600">{errors.class_id.message}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Guardian Information */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <PhoneIcon className="h-5 w-5 mr-2" />
-              Guardian Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Guardian Name"
-                {...register('guardian_name')}
-                error={errors.guardian_name?.message}
-                placeholder="Enter guardian name"
-              />
-              <Input
-                label="Guardian Phone"
-                type="tel"
-                {...register('guardian_phone')}
-                error={errors.guardian_phone?.message}
-                placeholder="Enter guardian phone number"
-              />
-              <Input
-                label="Guardian Email"
-                type="email"
-                {...register('guardian_email')}
-                error={errors.guardian_email?.message}
-                placeholder="Enter guardian email"
-              />
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Relationship
-                </label>
-                <select
-                  {...register('guardian_relationship')}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="parent">Parent</option>
-                  <option value="guardian">Guardian</option>
-                  <option value="grandparent">Grandparent</option>
-                  <option value="sibling">Sibling</option>
-                  <option value="other">Other</option>
-                </select>
-                {errors.guardian_relationship && (
-                  <p className="mt-1 text-sm text-red-600">{errors.guardian_relationship.message}</p>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Additional Information */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-              <EnvelopeIcon className="h-5 w-5 mr-2" />
-              Additional Information
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Input
-                label="Address"
-                {...register('address')}
-                error={errors.address?.message}
-                placeholder="Enter address"
-              />
-              <Input
-                label="Emergency Contact"
-                type="tel"
-                {...register('emergency_contact')}
-                error={errors.emergency_contact?.message}
-                placeholder="Enter emergency contact"
-              />
-              <Input
-                label="Blood Group"
-                {...register('blood_group')}
-                error={errors.blood_group?.message}
-                placeholder="e.g., A+, B-, O+"
-              />
-              <Input
-                label="Previous School"
-                {...register('previous_school')}
-                error={errors.previous_school?.message}
-                placeholder="Enter previous school (if any)"
-              />
-              <Input
-                label="Admission Date"
-                type="date"
-                {...register('admission_date')}
-                error={errors.admission_date?.message}
-              />
-            </div>
-          </div>
-
-          {/* Form Actions */}
-          <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => router.back()}
-              disabled={submitting}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={submitting}>
-              {submitting ? (
-                <>
-                  <LoadingSpinner size="sm" className="mr-2" />
-                  Creating...
-                </>
-              ) : (
-                'Create Student'
-              )}
-            </Button>
-          </div>
-        </form>
-      </div>
-    </div>
+    </FadeIn>
   );
 }
