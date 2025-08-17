@@ -253,7 +253,7 @@ export default function CreateStudentPage() {
                 <Select
                   label="Gender"
                   value={watch('gender')}
-                  onChange={e => setValue('gender', e.target.value)}
+                  onChange={e => setValue('gender', e.target.value as 'male' | 'female' | 'other')}
                   options={[
                     { value: 'male', label: 'Male' },
                     { value: 'female', label: 'Female' },
@@ -305,7 +305,7 @@ export default function CreateStudentPage() {
                 <Select
                   label="Relationship"
                   value={watch('guardian_relationship')}
-                  onChange={e => setValue('guardian_relationship', e.target.value)}
+                  onChange={e => setValue('guardian_relationship', e.target.value as 'parent' | 'guardian' | 'grandparent' | 'sibling' | 'other')}
                   options={[
                     { value: 'parent', label: 'Parent' },
                     { value: 'guardian', label: 'Guardian' },
