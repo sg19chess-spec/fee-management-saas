@@ -4,11 +4,16 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { useAuth } from '@/hooks/useAuth';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { StaggerContainer, StaggerItem } from '@/components/ui/motion';
 import {
   CurrencyDollarIcon,
   ExclamationTriangleIcon,
   ChartBarIcon,
   CalendarIcon,
+  TrendingUpIcon,
+  TrendingDownIcon,
 } from '@heroicons/react/24/outline';
 
 interface DashboardStatsProps {
@@ -162,6 +167,8 @@ export function DashboardStats({ stats: initialStats }: DashboardStatsProps) {
       changeType: 'positive',
       icon: CurrencyDollarIcon,
       color: 'bg-green-500',
+      bgColor: 'bg-green-50',
+      textColor: 'text-green-700',
     },
     {
       name: 'Outstanding Dues',
@@ -170,6 +177,8 @@ export function DashboardStats({ stats: initialStats }: DashboardStatsProps) {
       changeType: 'negative',
       icon: ExclamationTriangleIcon,
       color: 'bg-red-500',
+      bgColor: 'bg-red-50',
+      textColor: 'text-red-700',
     },
     {
       name: 'Collection Rate',
@@ -178,6 +187,8 @@ export function DashboardStats({ stats: initialStats }: DashboardStatsProps) {
       changeType: 'positive',
       icon: ChartBarIcon,
       color: 'bg-blue-500',
+      bgColor: 'bg-blue-50',
+      textColor: 'text-blue-700',
     },
     {
       name: 'YTD Revenue',
@@ -186,77 +197,89 @@ export function DashboardStats({ stats: initialStats }: DashboardStatsProps) {
       changeType: 'positive',
       icon: CalendarIcon,
       color: 'bg-purple-500',
+      bgColor: 'bg-purple-50',
+      textColor: 'text-purple-700',
     },
   ];
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {[...Array(4)].map((_, i) => (
-          <div key={i} className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse" />
-                </div>
-                <div className="ml-5 w-full">
-                  <div className="h-4 bg-gray-200 rounded animate-pulse mb-2" />
-                  <div className="h-6 bg-gray-200 rounded animate-pulse" />
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      <StaggerContainer>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {[...Array(4)].map((_, i) => (
+            <StaggerItem key={i}>
+              <Card>
+                <CardContent className="p-6">
+                  <div className="flex items-center space-x-4">
+                    <Skeleton className="h-12 w-12 rounded-full" />
+                    <div className="space-y-2 flex-1">
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-8 w-32" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </StaggerItem>
+          ))}
+        </div>
+      </StaggerContainer>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-        <div className="flex">
-          <ExclamationTriangleIcon className="h-5 w-5 text-red-400" />
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-800">Error loading statistics</h3>
-            <p className="mt-1 text-sm text-red-700">{error}</p>
+      <Card className="border-red-200 bg-red-50">
+        <CardContent className="p-6">
+          <div className="flex items-center space-x-3">
+            <ExclamationTriangleIcon className="h-6 w-6 text-red-500" />
+            <div>
+              <h3 className="text-lg font-semibold text-red-800">Error loading statistics</h3>
+              <p className="text-red-700">{error}</p>
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map((item) => (
-        <div key={item.name} className="bg-white overflow-hidden shadow rounded-lg">
-          <div className="p-5">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${item.color}`}>
-                  <item.icon className="h-5 w-5 text-white" />
+    <StaggerContainer>
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((item, index) => (
+          <StaggerItem key={item.name}>
+            <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-105">
+              <CardContent className="p-6">
+                <div className="flex items-center space-x-4">
+                  <div className={`p-3 rounded-xl ${item.bgColor} group-hover:scale-110 transition-transform duration-300`}>
+                    <item.icon className={`h-6 w-6 ${item.textColor}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-600 truncate">
+                      {item.name}
+                    </p>
+                    <div className="flex items-baseline space-x-2">
+                      <p className="text-2xl font-bold text-gray-900">
+                        {item.value}
+                      </p>
+                      <div className={`flex items-center text-sm font-medium ${
+                        item.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                      }`}>
+                        {item.changeType === 'positive' ? (
+                          <TrendingUpIcon className="h-4 w-4 mr-1" />
+                        ) : (
+                          <TrendingDownIcon className="h-4 w-4 mr-1" />
+                        )}
+                        {item.change}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
-                    {item.name}
-                  </dt>
-                  <dd className="flex items-baseline">
-                    <div className="text-2xl font-semibold text-gray-900">
-                      {item.value}
-                    </div>
-                    <div className={`ml-2 flex items-baseline text-sm font-semibold ${
-                      item.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                    }`}>
-                      {item.change}
-                    </div>
-                  </dd>
-                </dl>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
+              </CardContent>
+            </Card>
+          </StaggerItem>
+        ))}
+      </div>
+    </StaggerContainer>
   );
 }
+

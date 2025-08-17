@@ -4,41 +4,69 @@ import { DashboardStats } from '@/components/dashboard/DashboardStats';
 import { RecentPayments } from '@/components/dashboard/RecentPayments';
 import { FeeCollectionChart } from '@/components/dashboard/FeeCollectionChart';
 import { PendingDues } from '@/components/dashboard/PendingDues';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { FadeIn, StaggerContainer, StaggerItem } from '@/components/ui/motion';
 
 export default function DashboardPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Welcome to your fee management dashboard
-        </p>
-      </div>
+      <FadeIn>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+          <p className="text-lg text-gray-600">
+            Welcome to your fee management dashboard
+          </p>
+        </div>
+      </FadeIn>
 
       {/* Stats Cards */}
-      <DashboardStats />
+      <StaggerContainer>
+        <StaggerItem>
+          <DashboardStats />
+        </StaggerItem>
+      </StaggerContainer>
 
       {/* Charts and Tables Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Fee Collection Chart */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Fee Collection Trends</h2>
-          <FeeCollectionChart />
-        </div>
+      <StaggerContainer staggerDelay={0.2}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Fee Collection Chart */}
+          <StaggerItem>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle>Fee Collection Trends</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FeeCollectionChart />
+              </CardContent>
+            </Card>
+          </StaggerItem>
 
-        {/* Recent Payments */}
-        <div className="bg-white p-6 rounded-lg shadow">
-          <h2 className="text-lg font-medium text-gray-900 mb-4">Recent Payments</h2>
-          <RecentPayments />
+          {/* Recent Payments */}
+          <StaggerItem>
+            <Card className="hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle>Recent Payments</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <RecentPayments />
+              </CardContent>
+            </Card>
+          </StaggerItem>
         </div>
-      </div>
+      </StaggerContainer>
 
       {/* Pending Dues */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Pending Dues</h2>
-        <PendingDues />
-      </div>
+      <StaggerItem>
+        <Card className="hover:shadow-lg transition-shadow duration-300">
+          <CardHeader>
+            <CardTitle>Pending Dues</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <PendingDues />
+          </CardContent>
+        </Card>
+      </StaggerItem>
     </div>
   );
 }

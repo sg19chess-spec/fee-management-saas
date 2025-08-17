@@ -41,7 +41,7 @@ export default function DashboardLayout({
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <LoadingSpinner size="lg" />
       </div>
     );
@@ -58,8 +58,8 @@ export default function DashboardLayout({
       <div className="lg:pl-72">
         <DashboardHeader />
         
-        <main className="py-10">
-          <div className="px-4 sm:px-6 lg:px-8">
+        <main className="py-6 sm:py-8 lg:py-10">
+          <div className="px-4 sm:px-6 lg:px-8 xl:px-10">
             {children}
           </div>
         </main>

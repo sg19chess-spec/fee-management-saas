@@ -1,0 +1,18 @@
+{
+  "/_not-found": "app/_not-found.js",
+  "/api/fee-plans/[id]/route": "app/api/fee-plans/[id]/route.js",
+  "/api/payments/[id]/route": "app/api/payments/[id]/route.js",
+  "/api/fee-plans/route": "app/api/fee-plans/route.js",
+  "/api/whatsapp/reminders/route": "app/api/whatsapp/reminders/route.js",
+  "/api/students/route": "app/api/students/route.js",
+  "/api/payments/route": "app/api/payments/route.js",
+  "/api/whatsapp/send/route": "app/api/whatsapp/send/route.js",
+  "/api/whatsapp/test-connection/route": "app/api/whatsapp/test-connection/route.js",
+  "/page": "app/page.js",
+  "/api/whatsapp/webhook/route": "app/api/whatsapp/webhook/route.js",
+  "/api/students/[id]/route": "app/api/students/[id]/route.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/dashboard/students/page": "app/dashboard/students/page.js",
+  "/dashboard/fee-plans/page": "app/dashboard/fee-plans/page.js",
+  "/dashboard/payments/page": "app/dashboard/payments/page.js"
+}

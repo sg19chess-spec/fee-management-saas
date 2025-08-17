@@ -7,16 +7,19 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
 import { Badge } from '@/components/ui/Badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
+import { Skeleton } from '@/components/ui/Skeleton';
 import { mapStudents, mapClasses, type Student, type Class } from '@/lib/typeMappers';
 import {
   PlusIcon,
   MagnifyingGlassIcon,
   PencilIcon,
   EyeIcon,
+  UsersIcon,
 } from '@heroicons/react/24/outline';
-
-
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -133,15 +136,15 @@ export default function StudentsPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'success';
+        return 'bg-green-100 text-green-800 border-green-200';
       case 'inactive':
-        return 'error';
+        return 'bg-red-100 text-red-800 border-red-200';
       case 'graduated':
-        return 'info';
+        return 'bg-blue-100 text-blue-800 border-blue-200';
       case 'transferred':
-        return 'warning';
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
       default:
-        return 'default';
+        return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
@@ -149,10 +152,50 @@ export default function StudentsPage() {
     return new Date(dateString).toLocaleDateString('en-IN');
   };
 
+  const classOptions = [
+    { value: 'all', label: 'All Classes' },
+    ...classes.map((cls) => ({
+      value: cls.id,
+      label: `${cls.name} ${cls.section}`,
+    })),
+  ];
+
   if (loading && students.length === 0) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingSpinner size="lg" />
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Students</h1>
+            <p className="text-lg text-gray-600">
+              Manage student information and profiles
+            </p>
+          </div>
+          <Skeleton className="h-10 w-32" />
+        </div>
+        
+        <Card>
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {[...Array(5)].map((_, i) => (
+                <div key={i} className="flex items-center space-x-4">
+                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <div className="space-y-2 flex-1">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-6 w-20 rounded-full" />
+                  <Skeleton className="h-4 w-24" />
+                  <div className="flex space-x-2">
+                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className="h-8 w-8" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -162,8 +205,8 @@ export default function StudentsPage() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Students</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Students</h1>
+          <p className="text-lg text-gray-600">
             Manage student information and profiles
           </p>
         </div>
@@ -176,127 +219,112 @@ export default function StudentsPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-6 rounded-lg shadow">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Search Students
-            </label>
-            <div className="relative">
-              <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <UsersIcon className="h-5 w-5 mr-2" />
+            Search & Filter
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
               <Input
                 type="text"
+                label="Search Students"
                 placeholder="Search by name or admission number..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10"
+                icon={<MagnifyingGlassIcon className="h-4 w-4 text-gray-400" />}
               />
             </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Filter by Class
-            </label>
-            <select
-              value={selectedClass}
-              onChange={(e) => setSelectedClass(e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="all">All Classes</option>
-              {classes.map((cls) => (
-                <option key={cls.id} value={cls.id}>
-                  {cls.name} {cls.section}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-end">
-            <div className="text-sm text-gray-500">
-              {totalCount} student{totalCount !== 1 ? 's' : ''} found
+            <div>
+              <Select
+                label="Filter by Class"
+                value={selectedClass}
+                onChange={(e) => setSelectedClass(e.target.value)}
+                options={classOptions}
+              />
+            </div>
+            <div className="flex items-end">
+              <div className="text-sm text-gray-500">
+                {totalCount} student{totalCount !== 1 ? 's' : ''} found
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {/* Error Message */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-          <div className="flex">
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error loading students</h3>
-              <p className="mt-1 text-sm text-red-700">{error}</p>
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="p-6">
+            <div className="flex items-center space-x-3">
+              <div className="text-red-500 text-2xl">⚠️</div>
+              <div>
+                <h3 className="text-lg font-semibold text-red-800">Error loading students</h3>
+                <p className="text-red-700">{error}</p>
+              </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Students Table */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Student
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Admission No.
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Class
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Guardian Contact
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Admission Date
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+      <Card>
+        <CardHeader>
+          <CardTitle>Student List</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Student</TableHead>
+                <TableHead>Admission No.</TableHead>
+                <TableHead>Class</TableHead>
+                <TableHead>Guardian Contact</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Admission Date</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {students.map((student) => (
-                <tr key={student.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                          <span className="text-sm font-medium text-blue-600">
-                            {student.first_name[0]}{student.last_name[0]}
-                          </span>
-                        </div>
+                <TableRow key={student.id} className="hover:bg-gray-50 transition-colors">
+                  <TableCell>
+                    <div className="flex items-center space-x-3">
+                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
+                        <span className="text-sm font-semibold text-blue-600">
+                          {student.first_name[0]}{student.last_name[0]}
+                        </span>
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
+                      <div>
+                        <div className="font-medium text-gray-900">
                           {student.first_name} {student.last_name}
                         </div>
                       </div>
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  </TableCell>
+                  <TableCell className="font-mono text-sm">
                     {student.admission_number}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  </TableCell>
+                  <TableCell>
                     {student.classes?.name} {student.classes?.section}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  </TableCell>
+                  <TableCell>
                     <div className="text-sm text-gray-900">{student.guardian_phone}</div>
                     <div className="text-sm text-gray-500">{student.guardian_email}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <Badge variant={getStatusColor(student.enrollment_status)}>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getStatusColor(student.enrollment_status)}>
                       {student.enrollment_status}
                     </Badge>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  </TableCell>
+                  <TableCell className="text-sm text-gray-500">
                     {formatDate(student.admission_date)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  </TableCell>
+                  <TableCell>
                     <div className="flex justify-end space-x-2">
                       <Link href={`/dashboard/students/${student.id}/view`}>
                         <Button variant="outline" size="sm">
@@ -309,84 +337,61 @@ export default function StudentsPage() {
                         </Button>
                       </Link>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
-        </div>
+            </TableBody>
+          </Table>
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-            <div className="flex-1 flex justify-between sm:hidden">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-              >
-                Previous
-              </button>
-              <button
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
-              >
-                Next
-              </button>
-            </div>
-            <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm text-gray-700">
-                  Showing{' '}
-                  <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span>
-                  {' '}to{' '}
-                  <span className="font-medium">
-                    {Math.min(currentPage * itemsPerPage, totalCount)}
-                  </span>
-                  {' '}of{' '}
-                  <span className="font-medium">{totalCount}</span>
-                  {' '}results
-                </p>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-gray-200 pt-6 mt-6">
+              <div className="text-sm text-gray-700">
+                Showing{' '}
+                <span className="font-medium">{(currentPage - 1) * itemsPerPage + 1}</span>
+                {' '}to{' '}
+                <span className="font-medium">
+                  {Math.min(currentPage * itemsPerPage, totalCount)}
+                </span>
+                {' '}of{' '}
+                <span className="font-medium">{totalCount}</span>
+                {' '}results
               </div>
-              <div>
-                <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                  <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Previous
-                  </button>
-                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                    const page = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
-                    return (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
-                          currentPage === page
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    );
-                  })}
-                  <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
-                  >
-                    Next
-                  </button>
-                </nav>
+              <div className="flex space-x-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                  const page = Math.max(1, Math.min(totalPages - 4, currentPage - 2)) + i;
+                  return (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? 'default' : 'outline'}
+                      size="sm"
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
               </div>
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
