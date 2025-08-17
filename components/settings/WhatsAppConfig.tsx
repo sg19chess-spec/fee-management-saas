@@ -33,6 +33,12 @@ interface Institution {
   whatsapp_webhook_secret?: string;
 }
 
+// Add this interface for the API result
+interface WhatsAppTestResult {
+  success: boolean;
+  error?: string;
+}
+
 export default function WhatsAppConfig() {
   const [institution, setInstitution] = useState<Institution | null>(null);
   const [loading, setLoading] = useState(true);
@@ -156,12 +162,12 @@ export default function WhatsAppConfig() {
         }),
       });
 
-      const result = await response.json();
+      const result: WhatsAppTestResult = await response.json();
 
-      if (result.success) {
+      if ('success' in result && result.success) {
         setMessage({ type: 'success', text: 'WhatsApp connection test successful!' });
       } else {
-        setMessage({ type: 'error', text: `Connection test failed: ${result.error}` });
+        setMessage({ type: 'error', text: 'error' in result && result.error ? `Connection test failed: ${result.error}` : 'Connection test failed' });
       }
     } catch (error) {
       console.error('Error testing connection:', error);

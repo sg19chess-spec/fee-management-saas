@@ -51,6 +51,14 @@ interface ReminderTemplate {
   reminder_type: string;
 }
 
+// Add this interface for the API result
+interface ReminderApiResult {
+  success: boolean;
+  sent?: number;
+  failed?: number;
+  error?: string;
+}
+
 export default function ReminderManager() {
   const [feeItems, setFeeItems] = useState<StudentFeeItem[]>([]);
   const [templates, setTemplates] = useState<ReminderTemplate[]>([]);
@@ -151,12 +159,12 @@ export default function ReminderManager() {
         }),
       });
 
-      const result = await response.json();
+      const result: ReminderApiResult = await response.json();
 
-      if (result.success) {
+      if ('success' in result && result.success) {
         setMessage({ 
           type: 'success', 
-          text: `Successfully sent ${result.sent} reminder(s). ${result.failed > 0 ? `${result.failed} failed.` : ''}` 
+          text: `Successfully sent ${result.sent} reminder(s). ${result.failed && result.failed > 0 ? `${result.failed} failed.` : ''}` 
         });
         
         // Clear selections
@@ -166,7 +174,7 @@ export default function ReminderManager() {
         // Refresh data
         fetchData();
       } else {
-        setMessage({ type: 'error', text: result.error || 'Failed to send reminders' });
+        setMessage({ type: 'error', text: 'error' in result && result.error ? result.error : 'Failed to send reminders' });
       }
     } catch (error) {
       console.error('Error sending reminders:', error);
